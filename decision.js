@@ -6,6 +6,9 @@ const WHITELIST = [
     "/api/i",
     "/api/users/show",
     "/api/signin",
+    "/api/username/available",
+    "/api/username/available",
+    "/api/signup",
 ];
 
 const BLACKLIST = [
