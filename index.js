@@ -38,8 +38,12 @@ app.post("*", async (req, res)=>{
             body: JSON.stringify(req_json),
         });
 
-        let res_json = await result.json();
-        res.status(result.status).json(res_json).end();
+        let res_headers = result.headers;
+        let res_body = await result.arrayBuffer();
+
+        res.status(result.status);
+        res_headers.forEach((value, key)=>res.set(key, value));
+        res.end(res_body);
     } catch(e){
         console.log(e);
         res.status(500).end();
