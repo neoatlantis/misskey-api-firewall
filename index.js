@@ -7,16 +7,23 @@ const get_decision = require("./decision");
 const config = JSON.parse(require("fs").readFileSync("./config.json"));
 
 app.use(express.json());
+app.use(express.text());
 
 app.post("*", async (req, res)=>{
     let path = req.path;
 
+    let req_json = {};
+    try{
+        req_json = JSON.parse(req.text);
+    } catch(e){
+        return res.status(400).end();
+    }
+
     if(true !== await get_decision({
         config,
-        path, json: req.body,
+        path, json: req_json,
     })){
-        res.status(401).end();
-        return;
+        return res.status(401).end();
     }
 
     let upstream_url = new URL(config.upstream);
@@ -28,11 +35,11 @@ app.post("*", async (req, res)=>{
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(req.body),
+            body: JSON.stringify(req_json),
         });
 
-        let result_json = await result.json();
-        res.status(result.status).json(result_json).end();
+        let res_json = await result.json();
+        res.status(result.status).json(res_json).end();
     } catch(e){
         console.log(e);
         res.status(500).end();
