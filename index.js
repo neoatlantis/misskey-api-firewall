@@ -39,7 +39,7 @@ app.post("*", async (req, res)=>{
         });
 
         let res_headers = result.headers;
-        let res_body = await result.arrayBuffer();
+        let res_body = new Uint8Array(await result.arrayBuffer());
 
         res.status(result.status);
         res_headers.forEach((value, key)=>res.set(key, value));
