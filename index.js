@@ -1,13 +1,42 @@
 const express = require("express");
 const app = express();
 const fetch = require("node-fetch");
+const _ = require("lodash");
 
 const get_decision = require("./decision");
 
 const config = JSON.parse(require("fs").readFileSync("./config.json"));
 
+function get_upstream_url(base, url){
+    if(!_.endsWith(base, "/")) base += "/";
+    return base + url.slice(1);
+}
+
+
 app.use(express.json());
 app.use(express.text());
+
+app.get("*", async (req, res)=>{
+    let upstream_url = get_upstream_url(config.upstream, req.originalUrl);
+
+    try{
+        let result = await fetch(upstream_url, {
+            method: "GET",
+        });
+
+        let res_headers = result.headers;
+        let res_body = new Uint8Array(await result.arrayBuffer());
+
+        res.status(result.status);
+        res_headers.forEach((value, key)=>res.set(key, value));
+        res.end(res_body);
+    } catch(e){
+        console.log(e);
+        res.status(500).end();
+    }
+});
+
+
 
 app.post("*", async (req, res)=>{
     let path = req.path;
@@ -26,11 +55,10 @@ app.post("*", async (req, res)=>{
         return res.status(401).end();
     }
 
-    let upstream_url = new URL(config.upstream);
-    upstream_url.pathname = path;
+    let upstream_url = get_upstream_url(config.upstream, path);
 
     try{
-        let result = await fetch(upstream_url.href, {
+        let result = await fetch(upstream_url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
