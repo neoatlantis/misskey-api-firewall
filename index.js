@@ -17,6 +17,10 @@ app.use(express.json());
 app.use(express.text());
 
 app.get("*", async (req, res)=>{
+    if(true !== await get_decision({ config, req.path, method: "GET" })){
+        return res.status(401).end();
+    }
+
     let upstream_url = get_upstream_url(config.upstream, req.originalUrl);
 
     try{
