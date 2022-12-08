@@ -16,6 +16,7 @@ app.post("*", async (req, res)=>{
         path, json: req.body,
     })){
         res.status(401).end();
+        return;
     }
 
     let upstream_url = new URL(config.upstream);
