@@ -14,7 +14,7 @@ app.post("*", async (req, res)=>{
 
     let req_json = {};
     try{
-        req_json = JSON.parse(req.text);
+        req_json = JSON.parse(req.body);
     } catch(e){
         return res.status(400).end();
     }
