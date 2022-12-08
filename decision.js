@@ -10,7 +10,8 @@ const WHITELIST = [
 
 const BLACKLIST = [
     "/api/stats",
-    "/api/active-users",
+    "/api/federation/stats",
+    "/api/charts/active-users",
 ]
 
 module.exports = async function({ config, path, json, method="POST" }){
