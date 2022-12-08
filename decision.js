@@ -4,6 +4,7 @@ const verify_i = require("./verify_i");
 const NO_AUTH = [
     "/api/meta",
     "/api/i",
+    "/api/users/show",
     "/api/signin",
 ];
 
